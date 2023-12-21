@@ -1,0 +1,1 @@
+To verify your account click here: {{ link }}?code={{ code }}.

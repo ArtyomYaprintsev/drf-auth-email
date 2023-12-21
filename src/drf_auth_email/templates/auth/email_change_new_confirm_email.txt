@@ -1,0 +1,1 @@
+To confirm new email address click here: {{ link }}?code={{ code }}.

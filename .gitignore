@@ -1,0 +1,13 @@
+# IDE
+.vscode
+
+# Cache
+__pycache__
+*.pyc
+
+# Dev
+temp/
+venv/
+
+src/*
+!src/drf_auth_email

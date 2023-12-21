@@ -1,0 +1,2 @@
+A request has been made to change the email address on your account.
+The email address will be changed, if confirmed.
