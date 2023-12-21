@@ -351,7 +351,7 @@ class PasswordChange(GenericAPIView):
         user.save()
 
         return Response({
-            'detail': _('Password has been changed.'),
+            'success': _('Password has been changed.'),
         }, status=status.HTTP_200_OK)
 
 
