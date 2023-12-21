@@ -10,10 +10,11 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
-from . import serializers, models
+from . import serializers, models, schemas
 from .abstracts import AbstractCodeVerify
 from .settings import settings
 from .typing import Kwargs
+from .compat import extend_schema, OpenApiResponse, OpenApiExample
 
 
 USER = get_user_model()
@@ -29,7 +30,31 @@ class ActionCodeVerifyView(GenericAPIView):
         # TODO: add assert
         return self.action_code_model
 
+    @extend_schema(
+        parameters=[schemas.CodeQueryParameter],
+        responses={
+            200: OpenApiResponse(
+                response=serializers.SuccessMessageSerializer,
+                description='Action code is valid',
+                examples=[
+                    OpenApiExample(
+                        'Code parameter is valid',
+                        description='code parameter is valid',
+                        value={
+                            'success': 'The given `code` parameter is valid.',
+                        },
+                    ),
+                ],
+            ),
+            400: schemas.ErrorCodeResponse,
+        },
+    )
     def get(self, request, format=None):
+        """Verify the provided action code.
+
+        The code may be invalid for some reasons, so make sure the code is
+        valid before proceeding the requested action.
+        """
         try:
             self.get_action_code_model().check_is_valid(request.GET.get('code'))
         except ValueError as err:
@@ -65,6 +90,12 @@ class ActionVerifyView(GenericAPIView):
         # May be overridden
         return {}
 
+    @extend_schema(
+        parameters=[schemas.CodeQueryParameter],
+        responses={
+            400: schemas.ErrorCodeResponse,
+        },
+    )
     def post(self, request, format=None):
         try:
             action_code = self.get_action_code_model().check_is_valid(
@@ -103,6 +134,19 @@ class Signup(GenericAPIView):
 
         return user
 
+    @extend_schema(
+        request=signup_serializer_class,
+        responses={
+            201: OpenApiResponse(
+                response=user_serializer_class,
+                description='New unverified user',
+            ),
+            400: OpenApiResponse(
+                response=serializers.DetailErrorSerializer,
+                description='The request body is invalid',
+            )
+        },
+    )
     def post(self, request, format=None):
         """Create signup request with provided credentials.
 
@@ -179,13 +223,69 @@ class SignupVerify(ActionVerifyView):
         # Delete all related to verified user signup codes
         self.action_code_model.objects.filter(user=action_code.user).delete()
 
+    @extend_schema(
+        request={},
+        parameters=[schemas.CodeQueryParameter],
+        responses={
+            200: OpenApiResponse(
+                response=serializers.SuccessMessageSerializer,
+                description='',
+                examples=[
+                    OpenApiExample(
+                        'Signup completed successfully',
+                        value={'success': success_message},
+                    ),
+                ],
+            ),
+            400: schemas.ErrorCodeResponse,
+        },
+    )
+    def post(self, request, format=None):
+        """Confirm signup action.
+
+        Sets the user related with the provided valid signup code as verified.
+
+        Note:
+            After verification, all signup codes related with the user are
+            deleted.
+        """
+        return super().post(request, format)
+
 
 class PasswordReset(GenericAPIView):
     permission_classes = (AllowAny,)
     serializer_class = serializers.PasswordResetSerializer
     password_reset_model = models.PasswordResetCode
 
+    @extend_schema(
+        request=serializer_class,
+        responses={
+            201: OpenApiResponse(
+                response=serializers.SuccessMessageWithEmailSerializer,
+                description='The password reset request has been created',
+                examples=[
+                    OpenApiExample(
+                        'Success password reset request creation',
+                        value={
+                            'success': 'Success message',
+                            'email': 'example@email.com',
+                        },
+                        description=(
+                            'A password reset message has been sent to '
+                            '`example@email.com`. The user can continue '
+                            'the action by clicking the sent link.'
+                        ),
+                    ),
+                ],
+            ),
+            400: schemas.DetailErrorSerializer,
+        },
+    )
     def post(self, request, format=None):
+        """Create password reset request.
+
+        Generates a new password reset code and sends it to the provided email.
+        """
         serializer = self.serializer_class(data=request.data)
 
         if not serializer.is_valid():
@@ -253,13 +353,69 @@ class PasswordResetVerify(ActionVerifyView):
             user=action_code.user,
         ).delete()
 
+    @extend_schema(
+        request=serializer_class,
+        parameters=[schemas.CodeQueryParameter],
+        responses={
+            200: OpenApiResponse(
+                response=serializers.SuccessMessageSerializer,
+                examples=[
+                    OpenApiExample(
+                        'Password reset completed successfully',
+                        value={'success': success_message},
+                    ),
+                ],
+            ),
+            400: schemas.ErrorCodeResponse,
+        },
+    )
+    def post(self, request, format=None):
+        """Confirm password reset action.
+
+        Updates the password field of the user related with the provided
+        valid password reset code.
+
+        Note:
+            After update, all password reset codes related with the user are
+            deleted.
+        """
+        return super().post(request, format)
+
 
 class EmailChange(GenericAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.EmailChangeSerializer
     email_change_model = models.EmailChangeCode
 
+    @extend_schema(
+        request=serializer_class,
+        responses={
+            201: OpenApiResponse(
+                response=serializers.SuccessMessageWithEmailSerializer,
+                description='The email change request has been created',
+                examples=[
+                    OpenApiExample(
+                        'Success email change request creation',
+                        value={
+                            'success': 'Success message',
+                            'email': 'example@email.com',
+                        },
+                        description=(
+                            'A email change message has been sent to '
+                            '`example@email.com`. The user can continue '
+                            'the action by clicking the sent link.'
+                        ),
+                    ),
+                ],
+            ),
+            400: schemas.DetailErrorSerializer,
+        },
+    )
     def post(self, request, format=None):
+        """Create email change request.
+
+        Generates a new email change code and sends it to the provided email.
+        """
         serializer = self.serializer_class(data=request.data)
 
         if not serializer.is_valid():
@@ -323,12 +479,56 @@ class EmailChangeVerify(ActionVerifyView):
         action_code.change_user_email()
         self.action_code_model.objects.filter(user=action_code.user).delete()
 
+    @extend_schema(
+        request={},
+        parameters=[schemas.CodeQueryParameter],
+        responses={
+            200: OpenApiResponse(
+                response=serializers.SuccessMessageSerializer,
+                examples=[
+                    OpenApiExample(
+                        'Email change completed successfully',
+                        value={'success': success_message},
+                    ),
+                ],
+            ),
+            400: schemas.ErrorCodeResponse,
+        },
+    )
+    def post(self, request, format=None):
+        """Confirm email change action.
+
+        Updates the email field of the user related with the provided valid
+        email change code.
+
+        Note:
+            After update, all email change codes related with the user are
+            deleted.
+        """
+        return super().post(request, format)
+
 
 class PasswordChange(GenericAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.PasswordChangeSerializer
 
+    @extend_schema(
+        request=serializer_class,
+        responses={
+            200: OpenApiResponse(
+                response=serializers.SuccessMessageSerializer,
+                examples=[
+                    OpenApiExample(
+                        'Password change completed successfully',
+                        value={'success': 'Password has been changed.'},
+                    ),
+                ],
+            ),
+            400: schemas.ErrorCodeResponse,
+        }
+    )
     def post(self, request, format=None):
+        """Change the user password."""
         serializer = self.serializer_class(data=request.data)
 
         if not serializer.is_valid():
@@ -367,7 +567,21 @@ class Login(GenericAPIView):
         password = serializer.data.get('password')
         return authenticate(email=email, password=password)
 
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                response=serializers.TokenSerializer,
+                description='User authentication token',
+            ),
+            401: serializers.DetailErrorSerializer,
+        }
+    )
     def post(self, request, format=None):
+        """Get or create the authentication token.
+
+        Returns the authentication token for the user with provided
+        credentials.
+        """
         serializer = self.serializer_class(data=request.data)
 
         if not serializer.is_valid():
@@ -400,7 +614,29 @@ class Login(GenericAPIView):
 class Logout(GenericAPIView):
     permission_classes = (IsAuthenticated,)
 
+    @extend_schema(
+        request={},
+        parameters=[schemas.AuthorizationHeaderParameter],
+        responses={
+            200: OpenApiResponse(
+                response=serializers.SuccessMessageSerializer,
+                examples=[
+                    OpenApiExample(
+                        'Message about user logging out',
+                        value={
+                            'success': 'User logged out',
+                        },
+                    ),
+                ],
+            ),
+        },
+    )
     def post(self, request, format=None):
+        """Logout user.
+
+        Note:
+            Deletes the user related authentication token.
+        """
         tokens = Token.objects.filter(user=request.user)
         for token in tokens:
             token.delete()
