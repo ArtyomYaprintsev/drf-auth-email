@@ -84,5 +84,4 @@ class CodeVerifyEmail(Email):
         return context
 
     def send_email(self, target: str, context: Context) -> None:
-        context['code'] = 'CheckCode'
         return super().send_email(target, self.handle_context_link(context))
