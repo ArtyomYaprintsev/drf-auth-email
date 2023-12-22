@@ -1,6 +1,7 @@
 try:
     from drf_spectacular.utils import \
         extend_schema, \
+        extend_schema_view, \
         OpenApiResponse, \
         OpenApiParameter, \
         OpenApiExample
@@ -22,8 +23,11 @@ except ImportError:
     class OpenApiResponse(BaseIgnoreClass):
         """Ignored `drf_spectacular.utils.OpenApiResponse` class."""
 
-    def extend_schema(*args, **kwargs):
-        """Ignored `drf_spectacular.utils.extend_schema` method."""
+    def create_empty_decorator(*args, **kwargs):
+        """Return decorator without any logic."""
         def decorator(f):
             return f
         return decorator
+
+    extend_schema = create_empty_decorator
+    extend_schema_view = create_empty_decorator

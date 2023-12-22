@@ -14,7 +14,8 @@ from . import serializers, models, schemas
 from .abstracts import AbstractCodeVerify
 from .settings import settings
 from .typing import Kwargs
-from .compat import extend_schema, OpenApiResponse, OpenApiExample
+from .compat import \
+    extend_schema_view, extend_schema, OpenApiResponse, OpenApiExample
 
 
 USER = get_user_model()
@@ -123,6 +124,9 @@ class Signup(GenericAPIView):
     user_serializer_class = serializers.UserSerializer
     signup_model = models.SignupCode
 
+    def get_serializer_class(self):
+        return self.signup_serializer_class
+
     def check_verified_users(self, serializer) -> USER:
         # Check verified user with the given email existence
         user, is_created = USER.objects.get_or_create(
@@ -135,6 +139,7 @@ class Signup(GenericAPIView):
         return user
 
     @extend_schema(
+        summary='create signup request',
         request=signup_serializer_class,
         responses={
             201: OpenApiResponse(
@@ -196,6 +201,7 @@ class Signup(GenericAPIView):
         return Response(user_serializer.data, status=status.HTTP_201_CREATED)
 
 
+@extend_schema_view(get=extend_schema(summary='verify signup code'))
 class SignupCodeVerify(ActionCodeVerifyView):
     action_code_model = models.SignupCode
     proceed_action = _('verify signup')
@@ -224,7 +230,8 @@ class SignupVerify(ActionVerifyView):
         self.action_code_model.objects.filter(user=action_code.user).delete()
 
     @extend_schema(
-        request={},
+        summary='complete user signup',
+        request=None,
         parameters=[schemas.CodeQueryParameter],
         responses={
             200: OpenApiResponse(
@@ -258,6 +265,7 @@ class PasswordReset(GenericAPIView):
     password_reset_model = models.PasswordResetCode
 
     @extend_schema(
+        summary='create password reset request',
         request=serializer_class,
         responses={
             201: OpenApiResponse(
@@ -319,6 +327,7 @@ class PasswordReset(GenericAPIView):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema_view(get=extend_schema(summary='verify password reset code'))
 class PasswordResetCodeVerify(ActionCodeVerifyView):
     action_code_model = models.PasswordResetCode
     proceed_action = _('password reset')
@@ -354,6 +363,7 @@ class PasswordResetVerify(ActionVerifyView):
         ).delete()
 
     @extend_schema(
+        summary='complete password reset',
         request=serializer_class,
         parameters=[schemas.CodeQueryParameter],
         responses={
@@ -388,6 +398,7 @@ class EmailChange(GenericAPIView):
     email_change_model = models.EmailChangeCode
 
     @extend_schema(
+        summary='create email change request',
         request=serializer_class,
         responses={
             201: OpenApiResponse(
@@ -448,6 +459,7 @@ class EmailChange(GenericAPIView):
         }, status=status.HTTP_201_CREATED)
 
 
+@extend_schema_view(get=extend_schema(summary='verify email change code'))
 class EmailChangeCodeVerify(ActionCodeVerifyView):
     action_code_model = models.EmailChangeCode
     proceed_action = _('email change')
@@ -480,7 +492,8 @@ class EmailChangeVerify(ActionVerifyView):
         self.action_code_model.objects.filter(user=action_code.user).delete()
 
     @extend_schema(
-        request={},
+        summary='complete email change',
+        request=None,
         parameters=[schemas.CodeQueryParameter],
         responses={
             200: OpenApiResponse(
@@ -513,6 +526,7 @@ class PasswordChange(GenericAPIView):
     serializer_class = serializers.PasswordChangeSerializer
 
     @extend_schema(
+        summary='change user password',
         request=serializer_class,
         responses={
             200: OpenApiResponse(
@@ -568,6 +582,7 @@ class Login(GenericAPIView):
         return authenticate(email=email, password=password)
 
     @extend_schema(
+        summary='login',
         responses={
             200: OpenApiResponse(
                 response=serializers.TokenSerializer,
@@ -615,7 +630,8 @@ class Logout(GenericAPIView):
     permission_classes = (IsAuthenticated,)
 
     @extend_schema(
-        request={},
+        summary='logout',
+        request=None,
         parameters=[schemas.AuthorizationHeaderParameter],
         responses={
             200: OpenApiResponse(
