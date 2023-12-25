@@ -1,0 +1,1336 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "",
+        "version": "0.0.0"
+    },
+    "paths": {
+        "/api/schema/": {
+            "get": {
+                "operationId": "api_schema_retrieve",
+                "description": "OpenApi3 schema for this API. Format can be selected via content negotiation.\n\n- YAML: application/vnd.oai.openapi\n- JSON: application/vnd.oai.openapi+json",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "format",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "json",
+                                "yaml"
+                            ]
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "lang",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "af",
+                                "ar",
+                                "ar-dz",
+                                "ast",
+                                "az",
+                                "be",
+                                "bg",
+                                "bn",
+                                "br",
+                                "bs",
+                                "ca",
+                                "ckb",
+                                "cs",
+                                "cy",
+                                "da",
+                                "de",
+                                "dsb",
+                                "el",
+                                "en",
+                                "en-au",
+                                "en-gb",
+                                "eo",
+                                "es",
+                                "es-ar",
+                                "es-co",
+                                "es-mx",
+                                "es-ni",
+                                "es-ve",
+                                "et",
+                                "eu",
+                                "fa",
+                                "fi",
+                                "fr",
+                                "fy",
+                                "ga",
+                                "gd",
+                                "gl",
+                                "he",
+                                "hi",
+                                "hr",
+                                "hsb",
+                                "hu",
+                                "hy",
+                                "ia",
+                                "id",
+                                "ig",
+                                "io",
+                                "is",
+                                "it",
+                                "ja",
+                                "ka",
+                                "kab",
+                                "kk",
+                                "km",
+                                "kn",
+                                "ko",
+                                "ky",
+                                "lb",
+                                "lt",
+                                "lv",
+                                "mk",
+                                "ml",
+                                "mn",
+                                "mr",
+                                "ms",
+                                "my",
+                                "nb",
+                                "ne",
+                                "nl",
+                                "nn",
+                                "os",
+                                "pa",
+                                "pl",
+                                "pt",
+                                "pt-br",
+                                "ro",
+                                "ru",
+                                "sk",
+                                "sl",
+                                "sq",
+                                "sr",
+                                "sr-latn",
+                                "sv",
+                                "sw",
+                                "ta",
+                                "te",
+                                "tg",
+                                "th",
+                                "tk",
+                                "tr",
+                                "tt",
+                                "udm",
+                                "ug",
+                                "uk",
+                                "ur",
+                                "uz",
+                                "vi",
+                                "zh-hans",
+                                "zh-hant"
+                            ]
+                        }
+                    }
+                ],
+                "tags": [
+                    "api"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/vnd.oai.openapi": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            },
+                            "application/yaml": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            },
+                            "application/vnd.oai.openapi+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/auth/email/change/": {
+            "post": {
+                "operationId": "auth_email_change_create",
+                "description": "Create email change request.\n\nGenerates a new email change code and sends it to the provided email.",
+                "summary": "create email change request",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EmailChange"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EmailChange"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EmailChange"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessageWithEmail"
+                                },
+                                "examples": {
+                                    "SuccessEmailChangeRequestCreation": {
+                                        "value": {
+                                            "success": "Success message",
+                                            "email": "example@email.com"
+                                        },
+                                        "summary": "Success email change request creation",
+                                        "description": "A email change message has been sent to `example@email.com`. The user can continue the action by clicking the sent link."
+                                    }
+                                }
+                            }
+                        },
+                        "description": "The email change request has been created"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DetailError"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/auth/email/change/verify/": {
+            "post": {
+                "operationId": "auth_email_change_verify_create",
+                "description": "Confirm email change action.\n\nUpdates the email field of the user related with the provided valid\nemail change code.\n\nNote:\n    After update, all email change codes related with the user are\n    deleted.",
+                "summary": "complete email change",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "code",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Action code",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessage"
+                                },
+                                "examples": {
+                                    "EmailChangeCompletedSuccessfully": {
+                                        "value": {
+                                            "success": "Email address has been changed."
+                                        },
+                                        "summary": "Email change completed successfully"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DetailError"
+                                },
+                                "examples": {
+                                    "CodeParameterIsMissing": {
+                                        "value": {
+                                            "detail": "The `code` attribute must be a non-empty string."
+                                        },
+                                        "summary": "Code parameter is missing",
+                                        "description": "string `code` parameter is missing"
+                                    },
+                                    "CodeParameterIsInvalid": {
+                                        "value": {
+                                            "detail": "The given `code` parameter is invalid."
+                                        },
+                                        "summary": "Code parameter is invalid",
+                                        "description": "could not find a model that related with provided code"
+                                    },
+                                    "CodeIsExpired": {
+                                        "value": {
+                                            "detail": "The given `code` parameter is expired."
+                                        },
+                                        "summary": "Code is expired",
+                                        "description": "code is expired"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Action code is invalid"
+                    }
+                }
+            }
+        },
+        "/auth/email/change/verify/code/": {
+            "get": {
+                "operationId": "auth_email_change_verify_code_retrieve",
+                "description": "Verify the provided action code.\n\nThe code may be invalid for some reasons, so make sure the code is\nvalid before proceeding the requested action.",
+                "summary": "verify email change code",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "code",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Action code",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessage"
+                                },
+                                "examples": {
+                                    "CodeParameterIsValid": {
+                                        "value": {
+                                            "success": "The given `code` parameter is valid."
+                                        },
+                                        "summary": "Code parameter is valid",
+                                        "description": "code parameter is valid"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Action code is valid"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DetailError"
+                                },
+                                "examples": {
+                                    "CodeParameterIsMissing": {
+                                        "value": {
+                                            "detail": "The `code` attribute must be a non-empty string."
+                                        },
+                                        "summary": "Code parameter is missing",
+                                        "description": "string `code` parameter is missing"
+                                    },
+                                    "CodeParameterIsInvalid": {
+                                        "value": {
+                                            "detail": "The given `code` parameter is invalid."
+                                        },
+                                        "summary": "Code parameter is invalid",
+                                        "description": "could not find a model that related with provided code"
+                                    },
+                                    "CodeIsExpired": {
+                                        "value": {
+                                            "detail": "The given `code` parameter is expired."
+                                        },
+                                        "summary": "Code is expired",
+                                        "description": "code is expired"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Action code is invalid"
+                    }
+                }
+            }
+        },
+        "/auth/login/": {
+            "post": {
+                "operationId": "auth_login_create",
+                "description": "Get or create the authentication token.\n\nReturns the authentication token for the user with provided\ncredentials.",
+                "summary": "login",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Login"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Login"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Login"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Token"
+                                }
+                            }
+                        },
+                        "description": "User authentication token"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DetailError"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/auth/logout/": {
+            "post": {
+                "operationId": "auth_logout_create",
+                "description": "Logout user.\n\nNote:\n    Deletes the user related authentication token.",
+                "summary": "logout",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "authorization",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Authorization token",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessage"
+                                },
+                                "examples": {
+                                    "MessageAboutUserLoggingOut": {
+                                        "value": {
+                                            "success": "User logged out"
+                                        },
+                                        "summary": "Message about user logging out"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/auth/password/change/": {
+            "post": {
+                "operationId": "auth_password_change_create",
+                "description": "Change the user password.",
+                "summary": "change user password",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PasswordChange"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PasswordChange"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PasswordChange"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessage"
+                                },
+                                "examples": {
+                                    "PasswordChangeCompletedSuccessfully": {
+                                        "value": {
+                                            "success": "Password has been changed."
+                                        },
+                                        "summary": "Password change completed successfully"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DetailError"
+                                },
+                                "examples": {
+                                    "CodeParameterIsMissing": {
+                                        "value": {
+                                            "detail": "The `code` attribute must be a non-empty string."
+                                        },
+                                        "summary": "Code parameter is missing",
+                                        "description": "string `code` parameter is missing"
+                                    },
+                                    "CodeParameterIsInvalid": {
+                                        "value": {
+                                            "detail": "The given `code` parameter is invalid."
+                                        },
+                                        "summary": "Code parameter is invalid",
+                                        "description": "could not find a model that related with provided code"
+                                    },
+                                    "CodeIsExpired": {
+                                        "value": {
+                                            "detail": "The given `code` parameter is expired."
+                                        },
+                                        "summary": "Code is expired",
+                                        "description": "code is expired"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Action code is invalid"
+                    }
+                }
+            }
+        },
+        "/auth/password/reset/": {
+            "post": {
+                "operationId": "auth_password_reset_create",
+                "description": "Create password reset request.\n\nGenerates a new password reset code and sends it to the provided email.",
+                "summary": "create password reset request",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PasswordReset"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PasswordReset"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PasswordReset"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessageWithEmail"
+                                },
+                                "examples": {
+                                    "SuccessPasswordResetRequestCreation": {
+                                        "value": {
+                                            "success": "Success message",
+                                            "email": "example@email.com"
+                                        },
+                                        "summary": "Success password reset request creation",
+                                        "description": "A password reset message has been sent to `example@email.com`. The user can continue the action by clicking the sent link."
+                                    }
+                                }
+                            }
+                        },
+                        "description": "The password reset request has been created"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DetailError"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/auth/password/reset/verify/": {
+            "post": {
+                "operationId": "auth_password_reset_verify_create",
+                "description": "Confirm password reset action.\n\nUpdates the password field of the user related with the provided\nvalid password reset code.\n\nNote:\n    After update, all password reset codes related with the user are\n    deleted.",
+                "summary": "complete password reset",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "code",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Action code",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PasswordResetVerified"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PasswordResetVerified"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PasswordResetVerified"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessage"
+                                },
+                                "examples": {
+                                    "PasswordResetCompletedSuccessfully": {
+                                        "value": {
+                                            "success": "User password has been reset."
+                                        },
+                                        "summary": "Password reset completed successfully"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DetailError"
+                                },
+                                "examples": {
+                                    "CodeParameterIsMissing": {
+                                        "value": {
+                                            "detail": "The `code` attribute must be a non-empty string."
+                                        },
+                                        "summary": "Code parameter is missing",
+                                        "description": "string `code` parameter is missing"
+                                    },
+                                    "CodeParameterIsInvalid": {
+                                        "value": {
+                                            "detail": "The given `code` parameter is invalid."
+                                        },
+                                        "summary": "Code parameter is invalid",
+                                        "description": "could not find a model that related with provided code"
+                                    },
+                                    "CodeIsExpired": {
+                                        "value": {
+                                            "detail": "The given `code` parameter is expired."
+                                        },
+                                        "summary": "Code is expired",
+                                        "description": "code is expired"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Action code is invalid"
+                    }
+                }
+            }
+        },
+        "/auth/password/reset/verify/code/": {
+            "get": {
+                "operationId": "auth_password_reset_verify_code_retrieve",
+                "description": "Verify the provided action code.\n\nThe code may be invalid for some reasons, so make sure the code is\nvalid before proceeding the requested action.",
+                "summary": "verify password reset code",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "code",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Action code",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessage"
+                                },
+                                "examples": {
+                                    "CodeParameterIsValid": {
+                                        "value": {
+                                            "success": "The given `code` parameter is valid."
+                                        },
+                                        "summary": "Code parameter is valid",
+                                        "description": "code parameter is valid"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Action code is valid"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DetailError"
+                                },
+                                "examples": {
+                                    "CodeParameterIsMissing": {
+                                        "value": {
+                                            "detail": "The `code` attribute must be a non-empty string."
+                                        },
+                                        "summary": "Code parameter is missing",
+                                        "description": "string `code` parameter is missing"
+                                    },
+                                    "CodeParameterIsInvalid": {
+                                        "value": {
+                                            "detail": "The given `code` parameter is invalid."
+                                        },
+                                        "summary": "Code parameter is invalid",
+                                        "description": "could not find a model that related with provided code"
+                                    },
+                                    "CodeIsExpired": {
+                                        "value": {
+                                            "detail": "The given `code` parameter is expired."
+                                        },
+                                        "summary": "Code is expired",
+                                        "description": "code is expired"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Action code is invalid"
+                    }
+                }
+            }
+        },
+        "/auth/signup/": {
+            "post": {
+                "operationId": "auth_signup_create",
+                "description": "Create signup request with provided credentials.\n\nAccepts the user credentials, generates a signup verification code,\nand sends an email with a verification link.",
+                "summary": "create signup request",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Signup"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Signup"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Signup"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        },
+                        "description": "New unverified user"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DetailError"
+                                }
+                            }
+                        },
+                        "description": "The request body is invalid"
+                    }
+                }
+            }
+        },
+        "/auth/signup/verify/": {
+            "post": {
+                "operationId": "auth_signup_verify_create",
+                "description": "Confirm signup action.\n\nSets the user related with the provided valid signup code as verified.\n\nNote:\n    After verification, all signup codes related with the user are\n    deleted.",
+                "summary": "complete user signup",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "code",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Action code",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessage"
+                                },
+                                "examples": {
+                                    "SignupCompletedSuccessfully": {
+                                        "value": {
+                                            "success": "User email address has been verified."
+                                        },
+                                        "summary": "Signup completed successfully"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DetailError"
+                                },
+                                "examples": {
+                                    "CodeParameterIsMissing": {
+                                        "value": {
+                                            "detail": "The `code` attribute must be a non-empty string."
+                                        },
+                                        "summary": "Code parameter is missing",
+                                        "description": "string `code` parameter is missing"
+                                    },
+                                    "CodeParameterIsInvalid": {
+                                        "value": {
+                                            "detail": "The given `code` parameter is invalid."
+                                        },
+                                        "summary": "Code parameter is invalid",
+                                        "description": "could not find a model that related with provided code"
+                                    },
+                                    "CodeIsExpired": {
+                                        "value": {
+                                            "detail": "The given `code` parameter is expired."
+                                        },
+                                        "summary": "Code is expired",
+                                        "description": "code is expired"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Action code is invalid"
+                    }
+                }
+            }
+        },
+        "/auth/signup/verify/code/": {
+            "get": {
+                "operationId": "auth_signup_verify_code_retrieve",
+                "description": "Verify the provided action code.\n\nThe code may be invalid for some reasons, so make sure the code is\nvalid before proceeding the requested action.",
+                "summary": "verify signup code",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "code",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Action code",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessage"
+                                },
+                                "examples": {
+                                    "CodeParameterIsValid": {
+                                        "value": {
+                                            "success": "The given `code` parameter is valid."
+                                        },
+                                        "summary": "Code parameter is valid",
+                                        "description": "code parameter is valid"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Action code is valid"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DetailError"
+                                },
+                                "examples": {
+                                    "CodeParameterIsMissing": {
+                                        "value": {
+                                            "detail": "The `code` attribute must be a non-empty string."
+                                        },
+                                        "summary": "Code parameter is missing",
+                                        "description": "string `code` parameter is missing"
+                                    },
+                                    "CodeParameterIsInvalid": {
+                                        "value": {
+                                            "detail": "The given `code` parameter is invalid."
+                                        },
+                                        "summary": "Code parameter is invalid",
+                                        "description": "could not find a model that related with provided code"
+                                    },
+                                    "CodeIsExpired": {
+                                        "value": {
+                                            "detail": "The given `code` parameter is expired."
+                                        },
+                                        "summary": "Code is expired",
+                                        "description": "code is expired"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Action code is invalid"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "DetailError": {
+                "type": "object",
+                "description": "Detail error serializer.\n\nUsed in OpenAPI schema only.",
+                "properties": {
+                    "detail": {
+                        "type": "string",
+                        "description": "error message"
+                    }
+                },
+                "required": [
+                    "detail"
+                ]
+            },
+            "EmailChange": {
+                "type": "object",
+                "description": "Email change serializer.",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "new email",
+                        "maxLength": 255
+                    },
+                    "link": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "the link which can be send with the generated code inside email message"
+                    }
+                },
+                "required": [
+                    "email"
+                ]
+            },
+            "Login": {
+                "type": "object",
+                "description": "User login serializer.",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "the user email",
+                        "maxLength": 255
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "the user password",
+                        "maxLength": 128
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ]
+            },
+            "PasswordChange": {
+                "type": "object",
+                "description": "Password change serializer.",
+                "properties": {
+                    "password": {
+                        "type": "string",
+                        "description": "current password",
+                        "maxLength": 128
+                    },
+                    "new_password": {
+                        "type": "string",
+                        "description": "new password",
+                        "maxLength": 128
+                    }
+                },
+                "required": [
+                    "new_password",
+                    "password"
+                ]
+            },
+            "PasswordReset": {
+                "type": "object",
+                "description": "User password reset serializer.",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "the user related email",
+                        "maxLength": 255
+                    },
+                    "link": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "the link which can be send with the generated code inside email message"
+                    }
+                },
+                "required": [
+                    "email"
+                ]
+            },
+            "PasswordResetVerified": {
+                "type": "object",
+                "description": "Confirm password reset serializer.",
+                "properties": {
+                    "password": {
+                        "type": "string",
+                        "description": "new password",
+                        "maxLength": 128
+                    }
+                },
+                "required": [
+                    "password"
+                ]
+            },
+            "Signup": {
+                "type": "object",
+                "description": "User signup serializer.",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "the user email",
+                        "maxLength": 255
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "the user password",
+                        "maxLength": 128
+                    },
+                    "link": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "the link which can be send with the generated code inside email message"
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "description": "the user first name",
+                        "maxLength": 150
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "description": "the user last name",
+                        "maxLength": 150
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ]
+            },
+            "SuccessMessage": {
+                "type": "object",
+                "description": "Success message serializer.\n\nUsed in OpenAPI schema only.",
+                "properties": {
+                    "success": {
+                        "type": "string",
+                        "description": "success message"
+                    }
+                },
+                "required": [
+                    "success"
+                ]
+            },
+            "SuccessMessageWithEmail": {
+                "type": "object",
+                "description": "Success message serializer.\n\nContains additional `email` field. Used in OpenAPI schema only.",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "success action related email"
+                    }
+                },
+                "required": [
+                    "email"
+                ]
+            },
+            "Token": {
+                "type": "object",
+                "description": "User authentication token serializer.\n\nUsed in OpenAPI schema only.",
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "description": "user authentication token"
+                    }
+                },
+                "required": [
+                    "token"
+                ]
+            },
+            "User": {
+                "type": "object",
+                "description": "User model serializer.\n\nOn `update()` or `create()` methods call generates hashed password from\nthe provided password field.",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "Email address",
+                        "maxLength": 255
+                    },
+                    "password": {
+                        "type": "string",
+                        "writeOnly": true,
+                        "maxLength": 128
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "maxLength": 150
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "maxLength": 150
+                    }
+                },
+                "required": [
+                    "email",
+                    "id",
+                    "password"
+                ]
+            }
+        },
+        "securitySchemes": {
+            "basicAuth": {
+                "type": "http",
+                "scheme": "basic"
+            },
+            "cookieAuth": {
+                "type": "apiKey",
+                "in": "cookie",
+                "name": "sessionid"
+            }
+        }
+    }
+}
