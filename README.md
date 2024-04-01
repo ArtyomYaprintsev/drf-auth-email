@@ -248,6 +248,7 @@ Endpoints summary:
 
 ## Roadmap
 
+- [ ] Create different models for the user with username and without it
 - [ ] Create admin models
 - [ ] Add docstrings
 - [ ] Add tests
